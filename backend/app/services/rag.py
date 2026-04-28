@@ -1,5 +1,4 @@
 import os
-import faiss
 import numpy as np
 import logging
 from sentence_transformers import SentenceTransformer
