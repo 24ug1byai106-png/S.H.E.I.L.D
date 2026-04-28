@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-orange: #f97316;
+  --color-brand-red: #ef4444;
+  --color-brand-dark: #0f172a;
+  --color-brand-card: rgba(30, 41, 59, 0.7);
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-brand-card backdrop-blur-lg border border-white/10 shadow-xl;
+  }
+}
+
+body {
+  @apply bg-brand-dark text-slate-100 antialiased min-h-screen selection:bg-brand-orange selection:text-white;
+}
+
+/* Custom Scrollbar for premium feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Leaflet dark mode overrides */
+.leaflet-container {
+  background: #0f172a !important;
+}
+.leaflet-layer,
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out,
+.leaflet-control-attribution {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+
+/* Marker ping animation */
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Custom marker containers — remove leaflet defaults */
+.custom-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Leaflet popup styling override for dark theme */
+.leaflet-popup-content-wrapper {
+  background: #0f1115 !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
+  padding: 0 !important;
+}
+.leaflet-popup-tip {
+  background: #0f1115 !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+}
+.leaflet-popup-close-button {
+  color: #94a3b8 !important;
+}
+.leaflet-popup-close-button:hover {
+  color: white !important;
+}
+

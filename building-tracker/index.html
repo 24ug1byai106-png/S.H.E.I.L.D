@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiveTrack - Building Proximity Tracker</title>
+    <meta name="description" content="Real-time building tracking and proximity detection using Google Maps">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="url(#grad1)" stroke-width="2" fill="none"/>
+                        <path d="M12 8L8 10V14L12 16L16 14V10L12 8Z" fill="url(#grad1)"/>
+                        <defs><linearGradient id="grad1" x1="0" y1="0" x2="24" y2="24">
+                            <stop offset="0%" stop-color="#6366f1"/>
+                            <stop offset="100%" stop-color="#a855f7"/>
+                        </linearGradient></defs>
+                    </svg>
+                </div>
+                <span class="logo-text">LiveTrack</span>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <label class="input-label">Search Building / Area</label>
+            <div class="search-wrapper">
+                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Enter building name or address..." autocomplete="off">
+            </div>
+            <button class="btn-primary" id="searchBtn" onclick="searchBuilding()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                </svg>
+                Track Location
+            </button>
+        </div>
+
+        <!-- Radius Control -->
+        <div class="control-group">
+            <label class="input-label">Search Radius</label>
+            <div class="radius-control">
+                <input type="range" id="radiusSlider" min="100" max="2000" value="500" step="50">
+                <span class="radius-value" id="radiusValue">500m</span>
+            </div>
+        </div>
+
+        <!-- Target Building Info -->
+        <div class="info-card" id="targetCard" style="display:none;">
+            <div class="card-header">
+                <div class="pulse-dot"></div>
+                <span>Target Building</span>
+            </div>
+            <h3 id="targetName">--</h3>
+            <p class="card-address" id="targetAddress">--</p>
+            <div class="card-coords">
+                <span id="targetLat">--</span>
+                <span id="targetLng">--</span>
+            </div>
+        </div>
+
+        <!-- Nearby Buildings List -->
+        <div class="nearby-section" id="nearbySection" style="display:none;">
+            <div class="section-header">
+                <h4>Nearby Buildings</h4>
+                <span class="badge" id="nearbyCount">0</span>
+            </div>
+            <div class="nearby-list" id="nearbyList"></div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-bar" id="statsBar" style="display:none;">
+            <div class="stat">
+                <span class="stat-value" id="statTotal">0</span>
+                <span class="stat-label">Found</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="statNearest">--</span>
+                <span class="stat-label">Nearest</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="statRadius">500m</span>
+                <span class="stat-label">Radius</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Map Container -->
+    <div class="map-container">
+        <div id="map"></div>
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <button class="icon-btn" id="toggleSidebar" onclick="toggleSidebar()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+            </button>
+            <div class="live-indicator">
+                <div class="live-dot"></div>
+                <span>LIVE TRACKING</span>
+            </div>
+            <button class="icon-btn" id="myLocationBtn" onclick="goToMyLocation()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+                </svg>
+            </button>
+        </div>
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loader"></div>
+            <p>Initializing Map...</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao&libraries=places&callback=initMap"></script>
+</body>
+</html>
