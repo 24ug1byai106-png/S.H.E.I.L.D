@@ -4,6 +4,7 @@ Application configuration and environment settings.
 
 from pydantic_settings import BaseSettings
 from typing import List
+import os
 
 
 class Settings(BaseSettings):
@@ -33,7 +34,7 @@ class Settings(BaseSettings):
     MODEL_PATH: str = "yolov8n.pt"  # Placeholder model path
 
     # RAG Service
-    RAG_SERVICE_URL: str = "http://localhost:8001"
+    RAG_SERVICE_URL: str = f"http://{os.getenv('RAG_SERVICE_URL')}"
 
     # Logging
     LOG_LEVEL: str = "INFO"
