@@ -1,0 +1,41 @@
+services:
+  # RAG Microservice
+  - type: web
+    name: rag-service
+    env: python
+    region: oregon
+    rootDir: rag
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+
+  # Main Backend Service
+  - type: web
+    name: backend-service
+    env: python
+    region: oregon
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: RAG_SERVICE_URL
+        value: http://rag-service:10000
+
+  # Frontend Static Site
+  - type: static_site
+    name: frontend-site
+    env: node
+    region: oregon
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: backend-service
+          property: url

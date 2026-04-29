@@ -16,7 +16,7 @@ from app.models.schemas import AnalysisResponse, ReportDetail, ReportListItem, D
 from app.services.detection import detection_service
 from app.services.alert_agent import alert_agent
 from app.services.image_storage import image_storage
-from app.services.rag import rag_system
+from app.config import settings
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -47,10 +47,23 @@ async def analyze_image(
         # 2. Run detection based on category
         result = detection_service.analyze(image_path, category=category)
         
-        # 3. RAG: Generate human-readable explanation and recommendation
-        rag_output = rag_system.generate_report(category, result["damage_type"])
-        result["recommendation"] = rag_output["recommendation"]
-        
+        # 3. RAG: Generate human-readable explanation and recommendation via external service
+        rag_output = {"explanation": "Analysis complete.", "recommendation": "Monitor condition."}
+        try:
+            async with httpx.AsyncClient() as client:
+                rag_resp = await client.post(
+                    f"{settings.RAG_SERVICE_URL}/analyze",
+                    json={"damage_type": result["damage_type"], "severity": result["severity"]},
+                    timeout=5.0
+                )
+                if rag_resp.status_code == 200:
+                    rag_output = rag_resp.json()
+                else:
+                    logger.warning(f"RAG service returned status {rag_resp.status_code}")
+        except Exception as e:
+            logger.error(f"Failed to call RAG service: {e}")
+            
+        result["recommendation"] = rag_output.get("recommendation", "Monitor condition.")
         # Simulate "nearest places it can harm"
         nearby_hazards = []
         if result["severity"] in ["HIGH", "CRITICAL"]:
@@ -99,7 +112,7 @@ async def analyze_image(
             "longitude": lng,
             "nearby_hazards": nearby_hazards,
             "user_description": user_description,
-            "recommendation": rag_output["explanation"],
+            "recommendation": rag_output.get("explanation", "Analysis complete."),
             "detections": result.get("detections", []),
             "created_at": datetime.now(timezone.utc),
         }
@@ -112,7 +125,7 @@ async def analyze_image(
         result["location_name"] = location_name
         result["nearby_hazards"] = nearby_hazards
         result["category"] = category
-        result["recommendation"] = rag_output["explanation"]
+        result["recommendation"] = rag_output.get("explanation", "Analysis complete.")
         
         alert_fired = await alert_agent.evaluate(db, result, report_id)
         clustered = result.get("clustered", False)
@@ -132,7 +145,7 @@ async def analyze_image(
             location=result["location"],
             location_name=location_name,
             nearby_hazards=nearby_hazards,
-            recommendation=rag_output["explanation"],
+            recommendation=rag_output.get("explanation", "Analysis complete."),
             user_description=user_description,
             report_id=report_id,
             alert_triggered=alert_fired,

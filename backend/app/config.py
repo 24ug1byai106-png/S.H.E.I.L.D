@@ -32,6 +32,9 @@ class Settings(BaseSettings):
     MODEL_CONFIDENCE_THRESHOLD: float = 0.45
     MODEL_PATH: str = "yolov8n.pt"  # Placeholder model path
 
+    # RAG Service
+    RAG_SERVICE_URL: str = "http://localhost:8001"
+
     # Logging
     LOG_LEVEL: str = "INFO"
     ALERT_LOG_FILE: str = "./logs/alerts.log"
