@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { UploadPage } from './pages/UploadPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { LiveMapPage } from './pages/LiveMapPage';
 import { ReportDetailPage } from './pages/ReportDetailPage';
 import { InsightsPage } from './pages/InsightsPage';
 import { HistoryPage } from './pages/HistoryPage';
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<UploadPage />} />
           <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="live-map" element={<LiveMapPage />} />
           <Route path="insights" element={<InsightsPage />} />
           <Route path="history" element={<HistoryPage />} />
           <Route path="report/:id" element={<ReportDetailPage />} />

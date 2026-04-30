@@ -187,10 +187,10 @@ export const DashboardPage = () => {
 
       setReports(mapped);
 
-      // Auto-track the latest report if none is tracked
+      // Auto-track the latest report if it's new
       if (mapped.length > 0) {
-        const latest = mapped[0]; // reports sorted by created_at desc
-        if (!trackedId || !mapped.find(r => r.id === trackedId)) {
+        const latest = mapped[0]; 
+        if (latest.id !== trackedId) {
           setTrackedId(latest.id);
           setMapCenter([latest.lat, latest.lng]);
           setMapZoom(15);

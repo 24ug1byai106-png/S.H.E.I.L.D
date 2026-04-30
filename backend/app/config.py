@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     MODEL_PATH: str = "yolov8n.pt"  # Placeholder model path
 
     # RAG Service
-    RAG_SERVICE_URL: str = f"http://{os.getenv('RAG_SERVICE_URL')}"
+    RAG_SERVICE_URL: str = os.getenv("RAG_SERVICE_URL", "http://localhost:8001")
 
     # Logging
     LOG_LEVEL: str = "INFO"

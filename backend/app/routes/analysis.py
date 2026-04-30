@@ -173,7 +173,7 @@ async def list_reports(skip: int = 0, limit: int = 50, db: AsyncIOMotorDatabase 
             damage_type=r["damage_type"],
             severity=r["severity"],
             confidence=r["confidence"],
-            alert_triggered=(r.get("alert_triggered") == "true"),
+            alert_triggered=bool(r.get("alert_triggered")),
             clustered=r.get("clustered", False),
             created_at=r["created_at"].isoformat() if r.get("created_at") else None,
             latitude=r.get("latitude"),

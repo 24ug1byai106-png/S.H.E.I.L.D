@@ -40,7 +40,7 @@ export const Layout = () => {
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Upload Report', path: '/', icon: UploadCloud },
-    { name: 'Live Map', path: '/dashboard', icon: MapIcon }, // Points to dashboard for now
+    { name: 'Live Map', path: '/live-map', icon: MapIcon },
     { name: 'Insights', path: '/insights', icon: BarChart },
     { name: 'Reports History', path: '/history', icon: History },
   ];

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { getAnalytics } from '../lib/api';
 import { GlassCard } from '../components/ui/GlassCard';
+import { cn } from '../lib/utils';
 
 // Color Palette from the Image
 const COLORS = {
@@ -68,6 +69,19 @@ export const InsightsPage = () => {
     fetch();
   }, []);
 
+  const displaySeverityData = analytics ? [
+    { name: 'BUILDINGS', value: analytics.breakdown.buildings, color: COLORS.critical },
+    { name: 'ROADS', value: analytics.breakdown.roads, color: COLORS.medium },
+    { name: 'INFRA', value: analytics.breakdown.infrastructure, color: COLORS.minor },
+  ] : severityData;
+
+  const displayTrendData = analytics?.trend ? analytics.trend.map(t => ({ 
+    name: t.name.toUpperCase(), 
+    incidents: t.issues 
+  })) : trendData;
+
+  const summary = analytics?.automated_summary || "Area X shows high infrastructure degradation and requires urgent intervention. Correlation detected between seasonal runoff and pavement distress.";
+
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
       
@@ -91,7 +105,7 @@ export const InsightsPage = () => {
             <span className="text-[10px] font-black uppercase tracking-[0.2em]">AI Intelligence Brief</span>
           </div>
           <p className="text-white text-lg font-bold leading-snug mb-6">
-            <span className="text-brand-orange">Area X</span> shows high infrastructure degradation and requires urgent intervention. Correlation detected between seasonal runoff and pavement distress.
+            {summary}
           </p>
           <div className="flex items-center justify-between">
             <button className="text-[10px] font-black text-white underline underline-offset-4 decoration-brand-orange/50 hover:decoration-brand-orange transition-all uppercase tracking-widest">
@@ -152,13 +166,13 @@ export const InsightsPage = () => {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={severityData}
+                  data={displaySeverityData}
                   innerRadius={70}
                   outerRadius={90}
                   paddingAngle={8}
                   dataKey="value"
                 >
-                  {severityData.map((entry, index) => (
+                  {displaySeverityData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -170,7 +184,7 @@ export const InsightsPage = () => {
             </div>
           </div>
           <div className="flex justify-center gap-6 mt-4">
-            {severityData.map((s) => (
+            {displaySeverityData.map((s) => (
               <div key={s.name} className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: s.color }} />
                 <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{s.name}</span>
@@ -234,7 +248,7 @@ export const InsightsPage = () => {
 
         <div className="h-[400px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={trendData}>
+            <AreaChart data={displayTrendData}>
               <defs>
                 <linearGradient id="colorIncidents" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor={COLORS.critical} stopOpacity={0.3}/>
@@ -272,21 +286,21 @@ export const InsightsPage = () => {
         <StatCard 
           icon={<AlertTriangle className="w-5 h-5" />} 
           label="Critical Hazards" 
-          value="12" 
+          value={analytics?.overview?.critical_issues || "12"} 
           color="bg-red-500/10 text-red-500" 
         />
         <StatCard 
           icon={<Layers className="w-5 h-5" />} 
           label="Active Tasks" 
-          value="142" 
+          value={analytics?.overview?.total_reports || "142"} 
           color="bg-orange-500/10 text-orange-500" 
         />
         <StatCard 
           icon={<CheckCircle2 className="w-5 h-5" />} 
-          label="Resolved (30d)" 
-          value="892" 
+          label="Quality Score" 
+          value={analytics?.overview?.quality_score || "92"} 
           color="bg-blue-500/10 text-blue-500" 
-          trend="+14%"
+          trend="+1.2%"
         />
         <StatCard 
           icon={<Clock className="w-5 h-5" />} 
@@ -318,5 +332,3 @@ const StatCard = ({ icon, label, value, color, trend }) => (
     </div>
   </GlassCard>
 );
-
-const cn = (...classes) => classes.filter(Boolean).join(' ');
